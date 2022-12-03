@@ -15,31 +15,22 @@ public class Day3 {
             ArrayList arr = new ArrayList();
             String st;
             int value = 0;
+            int len;
             while ((st = br.readLine()) != null) {
-                Integer len = st.length() / 2;
-                String st1 = st.substring(0, len);
-                String st2 = st.substring(len, st.length());
-                value += (int) getMatch(st1,st2).get(0);
-
+                len = st.length() / 2;
+                value += (int) getMatch(st.substring(0, len),st.substring(len)).get(0);
                 arr.add(st);
             }
 
             System.out.println("Day 3 - Question 1: "+value);
-            int chunk = 3; // chunk size to divide
-            String st1 = "";
-            String st2 = "";
-            String st3 = "";
-            String st4 = "";
-            String st5 = "";
+
+            // question 2
+            int chunk = 3;
+            String firstMatch = "";
             value = 0;
             for(int i=0;i<arr.size();i+=chunk){
-                st1 = (String) arr.get(i);
-                st2 = (String) arr.get(i+1);
-                st3 = (String) arr.get(i+2);
-
-                st4 = (String) getMatch(st1,st2).get(1);
-                st5 = (String) getMatch (st3,st4).get(1);
-                value+= (int) getMatch(st3,st4).get(0);
+                firstMatch = (String) getMatch((String) arr.get(i),(String) arr.get(i+1)).get(1);
+                value += (int) getMatch (firstMatch,(String) arr.get(i+2)).get(0);
             }
             System.out.println("Day 3 - Question 2: "+value);
         }
