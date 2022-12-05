@@ -3,7 +3,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +19,6 @@ public class Day5 {
             int[] order;
             String st;
             List<List<String>> temp;
-            List<String> tempStack;
             String cratesString1 = "", cratesString2 = "";
             boolean readStacks = true;
             while ((st = br.readLine()) != null) {
@@ -39,7 +37,7 @@ public class Day5 {
                         // eerste keer stapels aanmaken
                         if (stacks.size()==0) {
                             for (int i = 0; i <= st.length(); i = i + 4) {
-                                stacks.add(new ArrayList());
+                                stacks.add(new ArrayList<>());
                             }
                         }
                         for (int i=0;i<st.length();i=i+4) {
