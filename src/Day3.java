@@ -34,7 +34,7 @@ public class Day3 {
             System.out.println("Day 3 - Question 2: "+value);
         }
         catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -58,7 +58,7 @@ public class Day3 {
                 else {
                     a=a-96;
                 }
-                skip = skip + str1.charAt(i);
+                skip = skip.concat(""+str1.charAt(i));
                 value+=a;
             }
         }

@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Day2 {
@@ -10,7 +8,7 @@ public class Day2 {
     public static void execute() {
         File file = new File("resources/day2.txt");
 
-        HashMap<String, Integer> strategy1 = new HashMap<String, Integer>();
+        HashMap<String, Integer> strategy1 = new HashMap<>();
         strategy1.put("A X",1+3);
         strategy1.put("A Y",2+6);
         strategy1.put("A Z",3+0);
@@ -21,7 +19,7 @@ public class Day2 {
         strategy1.put("C Y",2+0);
         strategy1.put("C Z",3+3);
 
-        HashMap<String, Integer> strategy2 = new HashMap<String, Integer>();
+        HashMap<String, Integer> strategy2 = new HashMap<>();
         strategy2.put("A X",0+3);
         strategy2.put("A Y",3+1);
         strategy2.put("A Z",6+2);
@@ -43,11 +41,11 @@ public class Day2 {
                 scoreStrategy2 += strategy2.get(st);
 
             }
-            System.out.println("Day 2 - Question 1: "+ scoreStrategy1.toString());
-            System.out.println("Day 2 - Question 2: "+ scoreStrategy2.toString());
+            System.out.println("Day 2 - Question 1: "+ scoreStrategy1);
+            System.out.println("Day 2 - Question 2: "+ scoreStrategy2);
         }
         catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }

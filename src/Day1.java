@@ -13,8 +13,8 @@ public class Day1 {
             BufferedReader br = new BufferedReader(new FileReader(file));
 
             String st;
-            ArrayList<Integer> deer = new ArrayList<Integer>();
-            Integer total = 0;
+            ArrayList<Integer> deer = new ArrayList<>();
+            int total = 0;
             while ((st = br.readLine()) != null) {
                 if (st.isBlank()) {
                     deer.add(total);
@@ -29,7 +29,7 @@ public class Day1 {
 
         }
         catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }

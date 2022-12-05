@@ -32,7 +32,7 @@ public class Day4 {
             System.out.println("Day 4 - Question 2: "+j);
         }
         catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
