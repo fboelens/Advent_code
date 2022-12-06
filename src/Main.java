@@ -4,7 +4,8 @@ public class Main {
         /*
         Day2.execute();
         Day3.execute();
-        Day4.execute();*/
-        Day5.execute();
+        Day4.execute();
+        Day5.execute();*/
+        Day6.execute();
     }
 }

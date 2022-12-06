@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -52,11 +50,11 @@ public class Day5 {
                                 .mapToInt(Integer::parseInt)
                                 .toArray();
 
-                        temp = moveArrays(stacks.get(order[1] - 1), stacks.get(order[2] - 1), order[0]);
+                        temp = moveStacks(stacks.get(order[1] - 1), stacks.get(order[2] - 1), order[0]);
                         stacks.set(order[1] - 1, (ArrayList<String>) temp.get(0));
                         stacks.set(order[2] - 1, (ArrayList<String>) temp.get(1));
 
-                        temp = moveArrays9001(stacks2.get(order[1] - 1), stacks2.get(order[2] - 1), order[0]);
+                        temp = moveStacks9001(stacks2.get(order[1] - 1), stacks2.get(order[2] - 1), order[0]);
                         stacks2.set(order[1] - 1, (ArrayList<String>) temp.get(0));
                         stacks2.set(order[2] - 1, (ArrayList<String>) temp.get(1));
                     }
@@ -77,7 +75,7 @@ public class Day5 {
     }
 
     // source, target, nr
-    static @NotNull List<List<String>> moveArrays(ArrayList<String> arr1, ArrayList<String> arr2, int nr) {
+    static List<List<String>> moveStacks(ArrayList<String> arr1, ArrayList<String> arr2, int nr) {
         // move crate for crate from array 1 to array 2
         for (int i=0; i<nr;i++) {
             arr2.add(arr1.get(arr1.size()-1));
@@ -86,11 +84,10 @@ public class Day5 {
         return Arrays.asList(arr1,arr2);
     }
 
-    static @NotNull List<List<String>> moveArrays9001(ArrayList<String> arr1, ArrayList<String> arr2, int nr) {
+    static List<List<String>> moveStacks9001(ArrayList<String> arr1, ArrayList<String> arr2, int nr) {
         // move crate for crate from array 1 to array 2
-        ArrayList<String> a = new ArrayList<> (arr1.subList((arr1.size()-nr), arr1.size()));
-        arr1.subList(arr1.size()-nr, arr1.size()).clear();
-        arr2.addAll(arr2.size(),a);
+        arr2.addAll(arr2.size(),(arr1.subList((arr1.size()-nr), arr1.size()))); // voeg stapel toe van stack 1 naar 2
+        arr1.subList(arr1.size()-nr, arr1.size()).clear(); // verwijder crates van eerste stapel
         return Arrays.asList(arr1,arr2);
     }
 }
