@@ -1,41 +1,31 @@
-import org.w3c.dom.Node;
-
-import javax.swing.tree.TreeNode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day7 {
     static Integer totalSize=0;
-
     static Integer totalDiskSpace = 70000000;
     static Integer unUsedSpace = 30000000;
     static Integer bestFolderSize = 0;
+
     public static void execute() {
         File file = new File("resources/day7.txt");
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
-            String folderName = "";
+            String folderName;
 
             Folder topFolder = new Folder(null,"top");
             Folder currentFolder = topFolder;
-
-
 
             while ((st = br.readLine()) != null) {
                 // toplevel
                 if (st.startsWith("$ cd /")) {
                     currentFolder = topFolder;
-
                 }
                 // one level up
                 else {
@@ -57,15 +47,10 @@ public class Day7 {
                     Folder f = new Folder(currentFolder,folderName);
                     currentFolder.addFolder(f);
                 }
-                if (st.startsWith("$ ls")) {
-
-                }
                 // bestandsnaam
                 if (Character.isDigit(st.charAt(0))) {
                     Pattern p = Pattern.compile("\\d+");
                     Matcher m = p.matcher(st);
-                    m.find();
-                    //System.out.println(currentFolder.name +" has a file with " + m.group() );
                     currentFolder.changeSize(Integer.valueOf(m.group()));
                 }
 
@@ -74,7 +59,7 @@ public class Day7 {
             showFolderTree(topFolder);
 
             Integer currentDiskSpace = totalDiskSpace - topFolder.size;
-            Integer spaceNeeded = unUsedSpace - currentDiskSpace;
+            int spaceNeeded = unUsedSpace - currentDiskSpace;
             bestFolderSize = currentDiskSpace;
             findBestFolder(topFolder,spaceNeeded);
             System.out.println("Day 7 - Question 1: " + totalSize);
@@ -95,8 +80,8 @@ public class Day7 {
         }
     }
 
-    public static void findBestFolder(Folder f, Integer spaceNeeded ) {
-        Integer spaceLeft = spaceNeeded - f.size;
+    public static void findBestFolder(Folder f, int spaceNeeded ) {
+        int spaceLeft = spaceNeeded - f.size;
         if (spaceLeft<0 && f.size<bestFolderSize) {
             bestFolderSize = f.size;
         }
@@ -137,10 +122,4 @@ class Folder {
     public Folder getParent() {
         return this.parent;
     }
-
-    public String getName() {
-        return this.name;
-    }
-
-
 }
