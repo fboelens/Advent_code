@@ -51,7 +51,9 @@ public class Day7 {
                 if (Character.isDigit(st.charAt(0))) {
                     Pattern p = Pattern.compile("\\d+");
                     Matcher m = p.matcher(st);
-                    currentFolder.changeSize(Integer.valueOf(m.group()));
+                    if (m.find()){
+                        currentFolder.changeSize(Integer.valueOf(m.group()));
+                    }
                 }
 
 
