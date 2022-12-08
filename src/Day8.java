@@ -10,7 +10,6 @@ public class Day8 {
         File file = new File("resources/day8.txt");
         int currentTree;
         int visibleTrees = 0;
-        boolean visible;
         boolean northVisible, eastVisible, southVisible, westVisible;
 
         ArrayList<String> treemap = new ArrayList<>();
