@@ -7,47 +7,52 @@ public class Day12 {
     public static void execute() {
 
         File file = new File("resources/day12.txt");
-        ArrayList<String> map = new ArrayList<>();
         ArrayList<Node> allNodes = new ArrayList<>();
         ArrayList<Node> startingNodes = new ArrayList<>();
         int rows = 0;
+        int cols = 0;
         Node newNode;
-        Node source = new Node("");
-        Node target = new Node("");
+        Node source = new Node("",'0');
+        Node target = new Node("",'0');
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
 
             while ((st = br.readLine()) != null) {
-
-
-                for (int cols=0;cols<st.length();cols++) {
-                    newNode = new Node(cols +","+ rows);
-                    allNodes.add(newNode);
+                for (cols=0;cols<st.length();cols++) {
                     if (st.charAt(cols)=='S') {
+                        newNode = new Node(cols +","+ rows, 'a');
                         source = newNode;
-                        st = st.replace('S','a');
-                    }
-                    if (st.charAt(cols)=='E') {
-                        target = newNode;
-                        st = st.replace('E','z');
-                    }
-                    if (st.charAt(cols)=='S' || st.charAt(cols)=='a' ) {
+                        allNodes.add(newNode);
                         startingNodes.add(newNode);
                     }
+                    else {
+                        if (st.charAt(cols) == 'E') {
+                            newNode = new Node(cols + "," + rows, 'z');
+                            allNodes.add(newNode);
+                            target = newNode;
+                        }
+                        else {
+                            newNode = new Node(cols + "," + rows, st.charAt(cols));
+                            allNodes.add(newNode);
+
+                            if (st.charAt(cols)=='a') {
+                                startingNodes.add(newNode);
+                            }
+                        }
+
+                    }
                 }
-                map.add(st);
                 rows++;
             }
 
-            int shortestPath = findShortestPath(map, allNodes, source, target);
-            System.out.println("Day 12 - Question 2: "  + shortestPath);
+            int shortestPath = findShortestPath(allNodes, source, target, cols);
+            System.out.println("Day 12 - Question 1: "  + shortestPath);
 
             int bestPath = shortestPath;
             for (Node n: startingNodes) {
-
-                shortestPath = findShortestPath(map, allNodes, n, target);
+                shortestPath = findShortestPath(allNodes, n, target, cols);
                 if (shortestPath!=0 && shortestPath<bestPath) {
                     bestPath = shortestPath;
                 }
@@ -60,59 +65,58 @@ public class Day12 {
         }
     }
 
-    public static int findShortestPath(ArrayList<String> map, ArrayList<Node> allNodes, Node source, Node target) {
+    public static int findShortestPath(ArrayList<Node> allNodes, Node source, Node target, int width) {
         Node currentNode;
         char up ;
         char down;
         char left;
         char right;
-        int rows = 0;
 
-        for (String nodes : map) {
-            for (int cols = 0; cols < nodes.length(); cols++) {
-                char currentHeight = nodes.charAt(cols);
-                int currentPos = cols + ((nodes.length()) * rows);
+        for (int rows = 0; rows<allNodes.size()/width;rows++) {
+            for (int cols = 0; cols < width; cols++) {
+                char currentHeight = allNodes.get(cols+(rows*width)).getValue();
+                int currentPos = cols + (width * rows);
                 currentNode = allNodes.get(currentPos);
 
                 // kijk boven
                 if (rows > 0) {
-                    up = map.get(rows - 1).charAt(cols);
+                    up = allNodes.get(currentPos-width).getValue(); //map.get(rows - 1).charAt(cols);
 
                     if ((currentHeight + 1) - up >= 0) {
                         //System.out.println("UP " + currentHeight + " " + up);
-                        currentNode.addDestination(allNodes.get(cols + (nodes.length() * (rows - 1))), 1);
+                        currentNode.addDestination(allNodes.get(cols + (width * (rows - 1))), 1);
                     }
                 }
                 // kijk rechts
-                if (cols < nodes.length() - 1) {
-                    right = nodes.charAt(cols + 1);
+                if (cols < width - 1) {
+                    right = allNodes.get(currentPos+1).getValue();
                     if ((currentHeight + 1) - right >= 0) {
                         //System.out.println("right " + currentHeight + " " + right);
-                        currentNode.addDestination(allNodes.get(cols + 1 + (nodes.length() * (rows))), 1);
+                        currentNode.addDestination(allNodes.get(cols + 1 + (width * (rows))), 1);
                     }
 
                 }
                 // kijk onder
-                if (rows < map.size() - 1) {
-                    down = map.get(rows + 1).charAt(cols);
+                if (rows < allNodes.size()/width - 1) {
+                    down = allNodes.get(currentPos+width).getValue();
                     if ((currentHeight + 1) - down >= 0) {
                         //System.out.println("down " + currentHeight + " " + down);
-                        currentNode.addDestination(allNodes.get(cols + (nodes.length() * (rows + 1))), 1);
+                        currentNode.addDestination(allNodes.get(cols + (width * (rows + 1))), 1);
                     }
                 }
                 // kijk links
                 if (cols > 0) {
-                    left = nodes.charAt(cols - 1);
+                    left = allNodes.get(currentPos-1).getValue();
                     if ((currentHeight + 1) - left >= 0) {
                         //System.out.println("left " + currentHeight + " " + left);
-                        currentNode.addDestination(allNodes.get(cols - 1 + (nodes.length() * (rows))), 1);
+                        currentNode.addDestination(allNodes.get(cols - 1 + (width * (rows))), 1);
                     }
                 }
                 allNodes.set(currentPos, currentNode);
 
             }
-            rows++;
         }
+
         Graph graph = new Graph();
         for (Node n : allNodes) {
             graph.addNode(n);
@@ -193,11 +197,11 @@ class Graph {
 class Node {
 
     private final String name;
+    private final char value;
     private List<Node> shortestPath = new LinkedList<>();
     private Integer distance = Integer.MAX_VALUE;
 
     Map<Node, Integer> adjacentNodes = new HashMap<>();
-
 
     public void addDestination(Node destination, int distance) {
         adjacentNodes.put(destination, distance);
@@ -214,14 +218,19 @@ class Node {
     public Map<Node,Integer> getAdjacentNodes() {
         return adjacentNodes;
     }
-    public Node(String name) {
+    public Node(String name, char value) {
         this.name = name;
+        this.value = value;
+    }
+
+    public char getValue() {
+        return this.value;
     }
 
     public String getName() {
         return this.name;
-
     }
+
     public void setDistance(Integer distance) {
         this.distance = distance;
     }
