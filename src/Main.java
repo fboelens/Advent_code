@@ -10,7 +10,8 @@ public class Main {
         Day7.execute();
         Day8.execute();
         Day9.execute();
-        Day10.execute();*/
-        Day11.execute();
+        Day10.execute();
+        Day11.execute();*/
+        Day12.execute();
     }
 }
