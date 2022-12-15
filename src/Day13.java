@@ -3,12 +3,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day13 {
-    private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-    private static ArrayList<Integer> ordered = new ArrayList<>();
+    final private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+    final private static ArrayList<Integer> ordered = new ArrayList<>();
 
     public static void execute() {
 
@@ -80,23 +79,15 @@ public class Day13 {
             st1 = "[" + st1 + "]";
         }
         if (st1.charAt(0) != '[' && st2.charAt(0) != '[') {
-            if (Integer.parseInt(st1)<Integer.parseInt(st2)) {
-                return 1;
-            }
-            if (Integer.parseInt(st1)==Integer.parseInt(st2)) {
-                return 0;
-            }
-            return -1;
+            return Integer.compare(Integer.parseInt(st2), Integer.parseInt(st1));
         }
 
-        // 2 lijsten?
         if (st1.charAt(0) == '[' && st2.charAt(0) == '[') {
             int i = 0;
             ArrayList<String> list1 = parseString(st1.substring(1, st1.length() - 1));
             ArrayList<String> list2 = parseString(st2.substring(1, st2.length() - 1));
 
             while (i < list1.size() && i < list2.size()) {
-                //System.out.println(list1 + " " + list2);
                 int result = compare(list1.get(i), list2.get(i));
 
                 if (result == 1 ) {
