@@ -12,32 +12,30 @@ public class Day12 {
         int rows = 0;
         int cols = 0;
         Node newNode;
-        Node source = new Node("",'0');
-        Node target = new Node("",'0');
+        Node source = new Node("", '0');
+        Node target = new Node("", '0');
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
 
             while ((st = br.readLine()) != null) {
-                for (cols=0;cols<st.length();cols++) {
-                    if (st.charAt(cols)=='S') {
-                        newNode = new Node(cols +","+ rows, 'a');
+                for (cols = 0; cols < st.length(); cols++) {
+                    if (st.charAt(cols) == 'S') {
+                        newNode = new Node(cols + "," + rows, 'a');
                         source = newNode;
                         allNodes.add(newNode);
                         startingNodes.add(newNode);
-                    }
-                    else {
+                    } else {
                         if (st.charAt(cols) == 'E') {
                             newNode = new Node(cols + "," + rows, 'z');
                             allNodes.add(newNode);
                             target = newNode;
-                        }
-                        else {
+                        } else {
                             newNode = new Node(cols + "," + rows, st.charAt(cols));
                             allNodes.add(newNode);
 
-                            if (st.charAt(cols)=='a') {
+                            if (st.charAt(cols) == 'a') {
                                 startingNodes.add(newNode);
                             }
                         }
@@ -48,12 +46,12 @@ public class Day12 {
             }
 
             int shortestPath = findShortestPath(allNodes, source, target, cols);
-            System.out.println("Day 12 - Question 1: "  + shortestPath);
+            System.out.println("Day 12 - Question 1: " + shortestPath);
 
             int bestPath = shortestPath;
-            for (Node n: startingNodes) {
+            for (Node n : startingNodes) {
                 shortestPath = findShortestPath(allNodes, n, target, cols);
-                if (shortestPath!=0 && shortestPath<bestPath) {
+                if (shortestPath != 0 && shortestPath < bestPath) {
                     bestPath = shortestPath;
                 }
             }
@@ -67,20 +65,20 @@ public class Day12 {
 
     public static int findShortestPath(ArrayList<Node> allNodes, Node source, Node target, int width) {
         Node currentNode;
-        char up ;
+        char up;
         char down;
         char left;
         char right;
 
-        for (int rows = 0; rows<allNodes.size()/width;rows++) {
+        for (int rows = 0; rows < allNodes.size() / width; rows++) {
             for (int cols = 0; cols < width; cols++) {
-                char currentHeight = allNodes.get(cols+(rows*width)).getValue();
+                char currentHeight = allNodes.get(cols + (rows * width)).getValue();
                 int currentPos = cols + (width * rows);
                 currentNode = allNodes.get(currentPos);
 
                 // kijk boven
                 if (rows > 0) {
-                    up = allNodes.get(currentPos-width).getValue(); //map.get(rows - 1).charAt(cols);
+                    up = allNodes.get(currentPos - width).getValue(); //map.get(rows - 1).charAt(cols);
 
                     if ((currentHeight + 1) - up >= 0) {
                         //System.out.println("UP " + currentHeight + " " + up);
@@ -89,7 +87,7 @@ public class Day12 {
                 }
                 // kijk rechts
                 if (cols < width - 1) {
-                    right = allNodes.get(currentPos+1).getValue();
+                    right = allNodes.get(currentPos + 1).getValue();
                     if ((currentHeight + 1) - right >= 0) {
                         //System.out.println("right " + currentHeight + " " + right);
                         currentNode.addDestination(allNodes.get(cols + 1 + (width * (rows))), 1);
@@ -97,8 +95,8 @@ public class Day12 {
 
                 }
                 // kijk onder
-                if (rows < allNodes.size()/width - 1) {
-                    down = allNodes.get(currentPos+width).getValue();
+                if (rows < allNodes.size() / width - 1) {
+                    down = allNodes.get(currentPos + width).getValue();
                     if ((currentHeight + 1) - down >= 0) {
                         //System.out.println("down " + currentHeight + " " + down);
                         currentNode.addDestination(allNodes.get(cols + (width * (rows + 1))), 1);
@@ -106,7 +104,7 @@ public class Day12 {
                 }
                 // kijk links
                 if (cols > 0) {
-                    left = allNodes.get(currentPos-1).getValue();
+                    left = allNodes.get(currentPos - 1).getValue();
                     if ((currentHeight + 1) - left >= 0) {
                         //System.out.println("left " + currentHeight + " " + left);
                         currentNode.addDestination(allNodes.get(cols - 1 + (width * (rows))), 1);
@@ -157,10 +155,10 @@ public class Day12 {
         }
     }
 
-    private static Node getLowestDistanceNode(Set < Node > unsettledNodes) {
+    private static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
         Node lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
-        for (Node node: unsettledNodes) {
+        for (Node node : unsettledNodes) {
             int nodeDistance = node.getDistance();
             if (nodeDistance < lowestDistance) {
                 lowestDistance = nodeDistance;
@@ -211,13 +209,14 @@ class Node {
         this.shortestPath = shortestPath;
     }
 
-    public List<Node> getShortestPath(){
+    public List<Node> getShortestPath() {
         return this.shortestPath;
     }
 
-    public Map<Node,Integer> getAdjacentNodes() {
+    public Map<Node, Integer> getAdjacentNodes() {
         return adjacentNodes;
     }
+
     public Node(String name, char value) {
         this.name = name;
         this.value = value;
@@ -238,6 +237,4 @@ class Node {
     public Integer getDistance() {
         return this.distance;
     }
-
-
 }
