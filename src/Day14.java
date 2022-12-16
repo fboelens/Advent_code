@@ -61,61 +61,61 @@ public class Day14 {
             e.printStackTrace();
         }
     }
-}
 
-class Cave {
-    int[][] mp;
-    int sandPosition;
+    static class Cave {
+        int[][] mp;
+        int sandPosition;
 
-    boolean firstDown = false;
+        boolean firstDown = false;
 
-    ArrayList<ArrayList<Coordinate>> coordinates;
+        ArrayList<ArrayList<Coordinate>> coordinates;
 
-    public Cave() {
-        this.coordinates = new ArrayList<>();
-    }
+        public Cave() {
+            this.coordinates = new ArrayList<>();
+        }
 
-    public void setUpCave(int width, int height, int minX, int sandPosition) {
-        this.sandPosition = sandPosition - minX+150; // ugly
-        mp = new int[height+1+2][300+width+1]; // ugly
-        Arrays.stream(mp).forEach(a -> Arrays.fill(a, 0));
-        Arrays.fill(mp[height+2],1);
+        public void setUpCave(int width, int height, int minX, int sandPosition) {
+            this.sandPosition = sandPosition - minX+150; // ugly
+            mp = new int[height+1+2][300+width+1]; // ugly
+            Arrays.stream(mp).forEach(a -> Arrays.fill(a, 0));
+            Arrays.fill(mp[height+2],1);
 
-        int xFrom, xTo, yFrom, yTo;
+            int xFrom, xTo, yFrom, yTo;
 
 
-        for (ArrayList<Coordinate> cs:coordinates) {
-            for (int i=0;i<cs.size()-1;i++) {
-                xFrom = cs.get(i).x - minX + 150;
-                yFrom = cs.get(i).y;
-                xTo =  cs.get(i+1).x - minX + 150;
-                yTo = cs.get(i+1).y;
+            for (ArrayList<Coordinate> cs:coordinates) {
+                for (int i=0;i<cs.size()-1;i++) {
+                    xFrom = cs.get(i).x - minX + 150;
+                    yFrom = cs.get(i).y;
+                    xTo =  cs.get(i+1).x - minX + 150;
+                    yTo = cs.get(i+1).y;
 
-                if (xFrom > xTo) {
-                    for (int j = xTo; j<= xFrom ; j++) {
-
-                        mp[yFrom][j] = 1;
-                    }
-                }
-                else {
-                    if (xFrom < xTo) {
-                        for (int j = xFrom; j<= xTo ; j++) {
+                    if (xFrom > xTo) {
+                        for (int j = xTo; j<= xFrom ; j++) {
 
                             mp[yFrom][j] = 1;
                         }
                     }
                     else {
-                        if (yFrom > yTo) {
-                            for (int j = yTo; j<= yFrom ; j++) {
+                        if (xFrom < xTo) {
+                            for (int j = xFrom; j<= xTo ; j++) {
 
-                                mp[j][xFrom] = 1;
+                                mp[yFrom][j] = 1;
                             }
                         }
                         else {
-                            if (yFrom < yTo) {
-                                for (int j = yFrom; j <= yTo; j++) {
+                            if (yFrom > yTo) {
+                                for (int j = yTo; j<= yFrom ; j++) {
 
                                     mp[j][xFrom] = 1;
+                                }
+                            }
+                            else {
+                                if (yFrom < yTo) {
+                                    for (int j = yFrom; j <= yTo; j++) {
+
+                                        mp[j][xFrom] = 1;
+                                    }
                                 }
                             }
                         }
@@ -123,81 +123,83 @@ class Cave {
                 }
             }
         }
-    }
 
-    public void printCave() {
-        for (int[] row: mp) {
-            for (int col : row) {
-                System.out.print(col);
-            }
-            System.out.println();
-
-        }
-    }
-
-    public void addCoordinate(ArrayList<Coordinate> coordinate) {
-        this.coordinates.add(coordinate);
-    }
-
-    public boolean dropSand() {
-        boolean caveFull = false;
-
-        int sandY = 0;
-        int sandX = this.sandPosition;
-        boolean blocked = false;
-        while (sandY < mp.length-1 && !blocked) {
-
-            // kan korrel vallen?
-            if (mp[sandY+1][sandX]!=0) {
-
-                // kan niet verder naar beneden vallen, dus probeer naar links
-                if (sandX==0) {
-                    blocked = true;
+        public void printCave() {
+            for (int[] row: mp) {
+                for (int col : row) {
+                    System.out.print(col);
                 }
-                else {
-                    if (mp[sandY+1][sandX-1]==0) {
-                        sandX--;
+                System.out.println();
+
+            }
+        }
+
+        public void addCoordinate(ArrayList<Coordinate> coordinate) {
+            this.coordinates.add(coordinate);
+        }
+
+        public boolean dropSand() {
+            boolean caveFull = false;
+
+            int sandY = 0;
+            int sandX = this.sandPosition;
+            boolean blocked = false;
+            while (sandY < mp.length-1 && !blocked) {
+
+                // kan korrel vallen?
+                if (mp[sandY+1][sandX]!=0) {
+
+                    // kan niet verder naar beneden vallen, dus probeer naar links
+                    if (sandX==0) {
+                        blocked = true;
                     }
                     else {
-                        // probeer naar rechts te vallen
-                        if (sandX>=mp[0].length-1) {
-                            blocked = true;
+                        if (mp[sandY+1][sandX-1]==0) {
+                            sandX--;
                         }
                         else {
-                            if (mp[sandY+1][sandX+1]==0) {
-                                sandX++;
-                            }
-                            else {
+                            // probeer naar rechts te vallen
+                            if (sandX>=mp[0].length-1) {
                                 blocked = true;
                             }
-                        }
+                            else {
+                                if (mp[sandY+1][sandX+1]==0) {
+                                    sandX++;
+                                }
+                                else {
+                                    blocked = true;
+                                }
+                            }
 
+                        }
                     }
                 }
-            }
 
-            if (!blocked) {
-                sandY++;
+                if (!blocked) {
+                    sandY++;
 
-                if (sandY == mp.length-3) {
-                    firstDown = true;
+                    if (sandY == mp.length-3) {
+                        firstDown = true;
+                    }
                 }
+
             }
-
+            if (sandY==0 && mp[sandY+1][sandX-1]!=0 && mp[sandY+1][sandX+1]!=0) {
+                caveFull = true;
+            }
+            mp[sandY][sandX] = 2;
+            return caveFull;
         }
-        if (sandY==0 && mp[sandY+1][sandX-1]!=0 && mp[sandY+1][sandX+1]!=0) {
-            caveFull = true;
-        }
-        mp[sandY][sandX] = 2;
-        return caveFull;
     }
+
+    static class Coordinate {
+        int x, y;
+
+        public Coordinate(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
 }
 
-class Coordinate {
-    int x, y;
-
-    public Coordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
