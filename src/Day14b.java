@@ -68,7 +68,7 @@ public class Day14b {
             int numberOfSand=0;
 
             // vloer aanmaken met een marge van 500 links en rechts
-            for (int i=left-500;i<=right+500;i++) {
+            for (int i=left-sandPos;i<=right+sandPos;i++) {
                 caveRocks.add(new Point(i,floor+2));
             }
 
