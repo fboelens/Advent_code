@@ -3,7 +3,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -14,18 +13,21 @@ public class Day15 {
     public static void execute() {
         File file = new File("resources/day15.txt");
         Set<SensorItem> sensorMap = new HashSet<>();
+        Set<SensorItem> beaconMap = new HashSet<>();
+        long line = 2000000;
+        long covered = 0;
 
-boolean once = true;
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
 
             String st;
             ArrayList<String> s = new ArrayList<>();
-            int sX, sY, bX, bY;
-            int minX = 0;
-            int maxX = 0;
-            int minY = 0;
-            int maxY = 0;
+            long sX, sY, bX, bY;
+            long minX = 0;
+            long maxX = 0;
+            long minY = 0;
+            long maxY = 0;
+            long maxDistance = 0;
             while ((st = br.readLine()) != null) {
                 Pattern p = Pattern.compile("-?\\d+");
                 Matcher m = p.matcher(st);
@@ -39,78 +41,88 @@ boolean once = true;
                 bX = Integer.parseInt(s.get(2));
                 bY = Integer.parseInt(s.get(3));
 
-                if (sX<minX) {
-                    minX = sX;
-                }
-                if (sX>maxX) {
-                    maxX = sX;
-                }
-                if (sY<minY) {
-                    minY = sY;
-                }
-                if (sY>maxY) {
-                    maxY = sY;
-                }
+                minX = Math.min(sX,minX);
+                minX = Math.min(bX,minX);
+                maxX = Math.max(sX,maxX);
+                maxX = Math.max(bX,maxX);
+                minY = Math.min(sY,minY);
+                minY = Math.min(bY,minY);
+                maxY = Math.max(sY,maxY);
+                maxY = Math.max(bY,maxY);
 
-                SensorItem beacon = new SensorItem(new Point(bX, bY), "B");
-                SensorItem sensor = new SensorItem(new Point(sX, sY), "S");
+                SensorItem beacon = new SensorItem(bX, bY, "B");
+                SensorItem sensor = new SensorItem(sX, sY, "S");
+                long distance = Math.abs(sX - bX) + Math.abs((sY - bY));
+                maxDistance = Math.max(distance, maxDistance);
+                sensor.addBeaconDistance(distance);
+                sensorMap.add(sensor); //
+                beaconMap.add(beacon); //
 
-                sensorMap.add(sensor); // add beacon
-                sensorMap.add(beacon); // add sensor
-
-                if (once) {
-                    int distance = Math.abs(sX - bX) + Math.abs((sY - bY));
-                    for (int i = sY - distance; i < sY + distance; i++) {
-                        for (int j = sX - distance; j < sX + distance; j++) {
-                            sensorMap.add(new SensorItem(new Point(j, i), "C")); // covered
-                        }
-
-                    }
-                    once = false;
-                }
                 s.clear();
-
-
             }
-            System.out.println(sensorMap.size());
 
-            for (int i = minY; i < maxY; i++) {
-                for (int j = minX; j < maxX; j++) {
-                    if (sensorMap.contains(new SensorItem(new Point(j, i), "S"))) {
-                        System.out.print("S");
-                    } else {
-                        if (sensorMap.contains(new SensorItem(new Point(j, i), "C"))) {
-                            System.out.print("#");
-                        }
-                        else {
-                            if (sensorMap.contains(new SensorItem(new Point(j, i), "B"))) {
-                                System.out.print("B");
-                            } else {
-                                System.out.print(".");
-                            }
-                        }
+            for (long i = minX - maxDistance ; i<=maxX + maxDistance; i++) {
+                // check alle sensors
+                boolean found = false;
+                for (SensorItem si : sensorMap) {
+                    long distance = Math.abs(si.x - i) + Math.abs((si.y - line));
+
+                    if (distance <= si.beaconDistance && !beaconMap.contains(new SensorItem(i, line, "B")) ) {
+                        covered++;
+                        found = true;
+                        break;
                     }
                 }
-                System.out.println();
             }
 
+            // zoek om de randen van de sensoren
+            long beaconResult = 0;
 
-            System.out.println("Day 15 - Question 1: ");
-            System.out.println("Day 15 - Question 2: ");
+            // doorloop alle sensoren en bekijke alle positities buiten de controlestraal
+            int[][] cl = {
+                    { -1,-1},
+                    {-1,1} ,
+                    {1,-1},
+                    {1,1}
+            };
+            long fx,fy;
+            for (SensorItem si : sensorMap) {
+                long distance = si.beaconDistance;
+                for (int i=0;i<distance;i++) {
+                    for (int[] c:cl) {
+                        fx = si.x+i * c[0];
+                        fy = si.y+i * c[1];
+                        System.out.println(fx + "," + fy);
+                    }
+                }
+                break;
+            }
 
-        } catch (Exception e) {
+            System.out.println("Day 15 - Question 1: " + covered);
+            System.out.println("Day 15 - Question 2: " + beaconResult);
+
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     static class SensorItem {
         String type;
-        Point p;
+        Long x;
+        Long y;
         SensorItem beacon;
+        Long beaconDistance;
 
-        public SensorItem(Point p, String type) {
+        public SensorItem(Long x, Long y, String type) {
             this.type = type;
-            this.p = p;
+            this.x = x;
+            this.y = y;
+            this.beaconDistance = Long.valueOf(0);
+        }
+
+        public void addBeaconDistance(Long beaconDistance) {
+            this.beaconDistance = beaconDistance;
         }
 
         public void addRelatedBeacon(SensorItem beacon) {
@@ -118,12 +130,12 @@ boolean once = true;
         }
 
         private int getId() {
-            return Integer.toString(p.x+100).hashCode() + Integer.toString(p.y+100).hashCode() + type.hashCode() ;
+            return new Point(x.intValue()+200,y.intValue()+200).hashCode() ;
         }
 
         @Override
         public int hashCode() {
-            return p.hashCode();
+            return getId();
         }
 
         @Override
